@@ -1,0 +1,14 @@
+---
+image: python:3.7
+
+stages:
+  - test
+
+before_script:
+  - apt update
+  - apt install -y bats git
+
+testme:
+  stage: test
+  script:
+    - bats tests
