@@ -8,26 +8,43 @@ script project layout.
 This repository provides the following file tree layout:
 
 ```
-simple/
+script/
 ├── docs
 │   ├── requirements.txt
-│   └── source
-│       ├── author.rst
-│       ├── conf.py
-│       ├── description.rst
-│       ├── index.rst
-│       ├── license.rst
-│       ├── links.rst
-│       └── _static
-│           └── .gitkeep
+│   ├── source
+│   │   ├── api
+│   │   │   ├── scripts
+│   │   │   │   └── script.inc
+│   │   │   └── scripts.inc
+│   │   ├── api.rst
+│   │   ├── author.rst
+│   │   ├── compatibility.rst
+│   │   ├── conf.py
+│   │   ├── description.rst
+│   │   ├── index.rst
+│   │   ├── license.rst
+│   │   ├── links.rst
+│   │   ├── parameters
+│   │   │   └── help.inc
+│   │   ├── parameters.rst
+│   │   ├── _static
+│   │   │   └── .gitkeep
+│   │   ├── uml.rst
+│   │   └── usage.rst
+│   └── uml
+│       └── flow.mmd
 ├── docthis.sh
 ├── .gitignore
 ├── img
 │   ├── author.png
-│   └── avatar.png
+│   ├── avatar.png
+│   └── flow.png
 ├── LICENSE
 ├── README.rst
-└── .readthedocs.yml
+├── .readthedocs.yml
+├── script.sh
+└── tests
+    └── script.bats
 ```
 
 ## Usage
