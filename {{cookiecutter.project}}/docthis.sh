@@ -11,7 +11,7 @@ PROJECT_PATH=$(pwd)
 INSTALL_REQUIREMENTS=false
 
 # requirements.txt file contents.
-REQUIREMENTS_PIP='sphinxcontrib-restbuilder
+REQUIREMENTS_PIP_CONTENTS='sphinxcontrib-restbuilder
 sphinxcontrib-globalsubs
 sphinx-prompt
 Sphinx-Substitution-Extensions
@@ -111,12 +111,12 @@ READTHEDOCS_CONTENTS="---
 version: 2
 
 sphinx:
-  configuration: docs/source/conf.py
+  configuration: doc/source/conf.py
 
 python:
   version: 3.7
   install:
-    - requirements: docs/requirements.txt
+    - requirements: doc/requirements.txt
 
 submodules:
   include: all
@@ -155,15 +155,15 @@ Contents
 
    usage
 
-   variables
+   variable
 
-   requirements
+   requirement
 
    compatibility
 
    license
 
-   links
+   link
 
    author
 
@@ -187,8 +187,8 @@ Download the script, give it execution permissions and execute it:
  chmod +x |PROJECT|.sh
  ./|PROJECT|.sh -h"
 
-# variables.rst file contents.
-VARIABLES_CONTENTS="Variables
+# variable.rst file contents.
+VARIABLE_CONTENTS="Variables
 ----------------------------------------------------------------------------
 
 The following variables are supported:
@@ -205,8 +205,8 @@ The following variables are supported:
 
   ./|PROJECT|.sh -p /home/username/myproject"
 
-# requirements.rst file contents.
-REQUIREMENTS_CONTENTS='Requirements
+# requirement.rst file contents.
+REQUIREMENT_CONTENTS='Requirements
 ----------------------------------------------------------------------------
 
 - Python 3.'
@@ -227,8 +227,8 @@ LICENSE_CONTENTS='License
 
 MIT. See the LICENSE file for more details.'
 
-# links.rst file contents.
-LINKS_CONTENTS='Links
+# link.rst file contents.
+LINK_CONTENTS='Links
 ----------------------------------------------------------------------------
 
 - |GITHUB_LINK|
@@ -290,6 +290,8 @@ function generate() {
     local project_path=$(pwd)
     [[ -d $1 ]] && project_path="$( cd "$1" ; pwd -P )"
 
+    local doc_path=$(get_doc_dir $project_path)
+
     # Valid values: 'github' or 'gitlab'.
     local coverage_ci='github'
     if ! [[ -z $2 ]]; then
@@ -307,14 +309,42 @@ function generate() {
     local img_url=$(get_img_url $project_path)
 
     # Setup everything for new projects.
-    if ! [[ -f $project_path/docs/source/conf.py ]]; then
+    if ! [[ -f $doc_path/source/conf.py ]]; then
 
         # Directory layout.
-        mkdir -p $project_path/docs/source/_static &>/dev/null
-        mkdir -p $project_path/docs/source/_templates &>/dev/null
-        mkdir -p $project_path/docs/build/html &>/dev/null
-        mkdir -p $project_path/docs/build/rst &>/dev/null
-                    
+        mkdir -p $doc_path/source/_static &>/dev/null
+        mkdir -p $doc_path/source/_templates &>/dev/null
+        mkdir -p $doc_path/build/html &>/dev/null
+        mkdir -p $doc_path/build/rst &>/dev/null
+
+        # Create requirements.txt file.
+        if ! [[ -f $doc_path/requirements.txt ]];
+        then
+            printf "$REQUIREMENTS_PIP_CONTENTS" > $doc_path/requirements.txt
+        fi
+
+        # Create conf.py file.
+        if ! [[ -f $doc_path/source/conf.py ]];
+        then
+            printf "$CONFIGURATION_CONTENTS" > $doc_path/source/conf.py
+        fi
+
+        # Create source files.
+        if ! [[ -f $doc_path/source/index.rst ]]; then
+            printf "$INDEX_CONTENTS" > $doc_path/source/index.rst
+            printf "$DESCRIPTION_CONTENTS" > $doc_path/source/description.rst
+            printf "$USAGE_CONTENTS" > $doc_path/source/usage.rst
+            printf '%s' "$VARIABLE_CONTENTS" > $doc_path/source/variable.rst
+            printf '%s' "$REQUIREMENT_CONTENTS" > $doc_path/source/requirement.rst
+            printf '%s' "$COMPATIBILITY_CONTENTS" > $doc_path/source/compatibility.rst
+            printf "$LICENSE_CONTENTS" > $doc_path/source/license.rst
+            printf '%s' "$LINK_CONTENTS" > $doc_path/source/link.rst
+            printf "$AUTHOR_CONTENTS" > $doc_path/source/author.rst
+            sed -i -E "s/\|AUTHOR_GENERATED_NAME\|/$author/g" $doc_path/source/*.*
+            sed -i -E "s/\|PROJECT_GENERATED_NAME\|/$project/g" $doc_path/source/*.*
+            sed -i -E "s/\|YEAR_GENERATED_VALUE\|/$project_year/g" $doc_path/source/*.*
+        fi
+        
         # Create .readthedocs.yml configuration file.
         if ! [[ -f $project_path/.readthedocs.yml ]]; then
             printf '%s' "$READTHEDOCS_CONTENTS" > $project_path/.readthedocs.yml
@@ -323,34 +353,6 @@ function generate() {
         # Copy docthis.sh if not exists.
         if ! [[ -f $project_path/docthis.sh ]]; then
             cp "$( cd "$(dirname "$0")" ; pwd -P )"/docthis.sh $project_path/docthis.sh
-        fi
-
-        # Create requirements.txt file.
-        if ! [[ -f $project_path/docs/requirements.txt ]];
-        then
-            printf "$REQUIREMENTS_PIP" > $project_path/docs/requirements.txt
-        fi
-
-        # Create conf.py file.
-        if ! [[ -f $project_path/docs/source/conf.py ]];
-        then
-            printf "$CONFIGURATION_CONTENTS" > $project_path/docs/source/conf.py
-        fi
-
-        # Create source files.
-        if ! [[ -f $project_path/docs/source/index.rst ]]; then
-            printf "$INDEX_CONTENTS" > $project_path/docs/source/index.rst
-            printf "$DESCRIPTION_CONTENTS" > $project_path/docs/source/description.rst
-            printf "$USAGE_CONTENTS" > $project_path/docs/source/usage.rst
-            printf '%s' "$VARIABLES_CONTENTS" > $project_path/docs/source/variables.rst
-            printf '%s' "$REQUIREMENTS_CONTENTS" > $project_path/docs/source/requirements.rst
-            printf '%s' "$COMPATIBILITY_CONTENTS" > $project_path/docs/source/compatibility.rst
-            printf "$LICENSE_CONTENTS" > $project_path/docs/source/license.rst
-            printf '%s' "$LINKS_CONTENTS" > $project_path/docs/source/links.rst
-            printf "$AUTHOR_CONTENTS" > $project_path/docs/source/author.rst
-            sed -i -E "s/\|AUTHOR_GENERATED_NAME\|/$author/g" $project_path/docs/source/*.*
-            sed -i -E "s/\|PROJECT_GENERATED_NAME\|/$project/g" $project_path/docs/source/*.*
-            sed -i -E "s/\|YEAR_GENERATED_VALUE\|/$project_year/g" $project_path/docs/source/*.*
         fi
 
         install_requirements
@@ -362,7 +364,7 @@ function generate() {
     fi # New project?.
 
     # Generate documentation.
-    python3 -m sphinx -b html $project_path/docs/source/ $project_path/docs/build/html
+    python3 -m sphinx -b html $doc_path/source/ $doc_path/build/html
     generate_rst $project_path $coverage_ci
 
     return 0
@@ -403,20 +405,22 @@ function generate_rst() {
 
     local author=$(get_author $project_path)
 
+    local doc_path=$(get_doc_dir $project_path)
+
     # When a line readed from the index.rst file is a menu item,
     # this variable will be setted to true.
     # This is a flag to indicate if items to include were found.
     local items_found=false
 
     # Clean files first.
-    rm -r $project_path/docs/build/rst/*.rst &>/dev/null
+    rm -r $doc_path/build/rst/*.rst &>/dev/null
 
-    python3 -m sphinx -b rst $project_path/docs/source/ $project_path/docs/build/rst
+    python3 -m sphinx -b rst $doc_path/source/ $doc_path/build/rst
 
     # Recreate the file to append content.
-    if [[ -f $project_path/docs/build/rst/index.rst ]]; then
-       readthedocs_to_rst $project_path/docs/build/rst/index.rst $project_path $coverage_ci
-       cat $project_path/docs/build/rst/index.rst > $project_path/README-single.rst
+    if [[ -f $doc_path/build/rst/index.rst ]]; then
+       readthedocs_to_rst $doc_path/build/rst/index.rst $project_path $coverage_ci
+       cat $doc_path/build/rst/index.rst > $project_path/README-single.rst
        printf '\n' >> $project_path/README-single.rst
     fi
 
@@ -429,16 +433,16 @@ function generate_rst() {
         if [[ $items_found == true ]] && ! [[ -z "$LINE"  ]]; then
 
             # Apply conversion from readthedocs to common rst.
-            readthedocs_to_rst $project_path/docs/build/rst/${LINE}.rst $project_path $coverage_ci
+            readthedocs_to_rst $doc_path/build/rst/${LINE}.rst $project_path $coverage_ci
 
-            if [[ -f $project_path/docs/build/rst/${LINE}.rst ]]; then
-                cat $project_path/docs/build/rst/${LINE}.rst >> $project_path/README-single.rst
+            if [[ -f $doc_path/build/rst/${LINE}.rst ]]; then
+                cat $doc_path/build/rst/${LINE}.rst >> $project_path/README-single.rst
                 printf "\n" >> $project_path/README-single.rst
             fi
 
         fi
 
-    done < $project_path/docs/source/index.rst
+    done < $doc_path/source/index.rst
 
     return 0
 }
@@ -461,6 +465,54 @@ function get_author() {
 
     whoami && return 0
 
+}
+
+# @description Obtains the project's documentation directory.
+#
+# This function tries:
+# - Read a *.readthedocs.yml* file.
+# - Search for the *./docs* directory.
+# - Default to *./doc*.
+#
+# @arg $1 string Optional project path. Default to current path.
+#
+# @exitcode 0 If successful.
+# @exitcode 1 On failure.
+#
+# @stdout Path to the documentation directory
+function get_doc_dir() {
+
+    local project_path=$(pwd)
+    [[ -d $1 ]] && project_path="$( cd "$1" ; pwd -P )"
+
+    # Read documentation path from Readthedocs configuration.
+    if [[ -f $project_path/.readthedocs.yml ]]; then
+
+        local config_line=$(cat .readthedocs.yml | grep 'configuration')
+
+        if ! [[ -z config_line ]]; then
+
+            # Remove the 'configuration:' part.
+            config_line=${config_line//configuration\: /}
+            config_line=$(dirname $config_line)
+
+            # Remove the 'source/' part.
+            config_line=${config_line//source/}
+
+            # Get the full path.
+            config_line=$(realpath -s $config_line)
+            echo $config_line
+
+            return 0
+        fi
+    fi
+
+    # Try /docs.
+    [[ -d $project_path/docs ]] && echo "$project_path/docs" && return 0
+
+    echo "$project_path/doc"
+    return 0
+    
 }
 
 # @description Get the continuous integration repository URL for Gitlab.
@@ -758,7 +810,9 @@ function get_variable_from_conf() {
 
     local project_path=$(pwd)
     [[ -d $2 ]] && project_path="$( cd "$2" ; pwd -P )"
-    ! [[ -f $project_path/docs/source/conf.py ]] && echo '' && return 0
+
+    local doc_path=$(get_doc_dir $project_path)
+    ! [[ -f $doc_path/source/conf.py ]] && echo '' && return 0
 
     local variable_value=''
 
@@ -769,7 +823,7 @@ function get_variable_from_conf() {
         variable_value=$(get_variable_line "$variable_name" $project_path)
 
     else
-        variable_value=$(cat $project_path/docs/source/conf.py | sed -n "s/^.*${variable_name}\s*\=\s*\(\S*\)\s*.*$/\1/p")
+        variable_value=$(cat $doc_path/source/conf.py | sed -n "s/^.*${variable_name}\s*\=\s*\(\S*\)\s*.*$/\1/p")
     fi
 
     # Remove quotes.
@@ -796,10 +850,12 @@ function get_variable_line() {
 
     local project_path=$(pwd)
     [[ -d $2 ]] && project_path="$( cd "$2" ; pwd -P )"
-    ! [[ -f $project_path/docs/source/conf.py ]] && return 1
+
+    local doc_path=$(get_doc_dir $project_path)
+    ! [[ -f $doc_path/source/conf.py ]] && return 1
 
     local variable_value=''
-    variable_value=$(grep "$variable_name =" $project_path/docs/source/conf.py)
+    variable_value=$(grep "$variable_name =" $doc_path/source/conf.py)
     # Remove spaces.
     variable_value="${variable_value//\ /}"
     # Remove variable_name=.
@@ -826,7 +882,7 @@ function help() {
              this parameter is not espeficied, the current path will be
              used.'
     echo 'Example:'
-    echo "./docthis.sh -p /home/username/my_project"
+    echo "./docthis.sh -c https://is.gd/oQNIYN -i -p /home/user/my_project"
     return 0
 
 }
@@ -847,9 +903,11 @@ function install_requirements() {
     sphinx_requirements="${sphinx_requirements,,}"
     sphinx_requirements="${sphinx_requirements//-/_}"
 
+    local doc_path=$(get_doc_dir $project_path)
+
     # Add a new line to requirements.txt to ensure visit all lines.
-    if [[ -f $project_path/docs/requirements.txt ]]; then
-        echo '' >> $project_path/docs/requirements.txt
+    if [[ -f $doc_path/requirements.txt ]]; then
+        echo '' >> $doc_path/requirements.txt
     fi
 
     local current_line=''
@@ -861,12 +919,12 @@ function install_requirements() {
         if ! [[ $sphinx_requirements == *"$current_line"* ]]; then
             python3 -m pip install $LINE
         fi
-    done < $project_path/docs/requirements.txt
+    done < $doc_path/requirements.txt
 
     # Remove added new line.
-    if [[ -f $project_path/docs/requirements.txt ]]; then
-        head -n -1 $project_path/docs/requirements.txt > $project_path/docs/tmp.txt
-        mv $project_path/docs/tmp.txt $project_path/docs/requirements.txt
+    if [[ -f $doc_path/requirements.txt ]]; then
+        head -n -1 $doc_path/requirements.txt > $doc_path/tmp.txt
+        mv $doc_path/tmp.txt $doc_path/requirements.txt
     fi
 
     return 0
@@ -935,7 +993,7 @@ function readthedocs_to_rst() {
    sed -i -E "s@\[image\:\ pipeline\]\[image\]@\.\.\ image\:\:\ $gitlab_ci_url\.svg\\n   :alt: pipeline@g" $1
 
     # Replace readthedocs status badge image.
-    sed -i -E "s@\[image\:\ readthedocs\]\[image\]@\.\.\ image\:\:\ https\:\/\/readthedocs\.org\/projects\/${project}\/badge\\n   :alt: readthedocs@g" $1
+    sed -i -E "s@\[image\:\ readthedocs\]\[image\]@\.\.\ image\:\:\ https\:\/\/readthedocs\.org\/projects\/$project\/badge\\n   :alt: readthedocs@g" $1
 
     # Replace coverage status badge image on github using coveralls.
     sed -i -E "s@\[image\:\ coverage\]\[image\]@\.\.\ image\:\:\ https\:\/\/coveralls\.io\/repos\/github\/$author\/$project\/badge\.svg\\n   :alt: coverage@g" $1

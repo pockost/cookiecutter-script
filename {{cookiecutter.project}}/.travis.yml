@@ -13,7 +13,10 @@ before_install:
   - sudo apt update
 
 install:
-  - sudo apt install -y bats
+  - sudo apt install -y bats git
+
+before_script:
+  - chmod +x testme.sh
 
 script:
-  - bats tests
+  - ./testme.sh -t

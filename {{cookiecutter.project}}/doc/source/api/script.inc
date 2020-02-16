@@ -1,4 +1,4 @@
 Scripts
 ******************************************************************************
 
-.. include:: api/scripts/{{ cookiecutter.project }}.inc
+.. include:: api/script/{{ cookiecutter.project }}.inc

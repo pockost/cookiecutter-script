@@ -7,8 +7,9 @@ stages:
 before_script:
   - apt update
   - apt install -y bats git
+  - chmod +x testme.sh
 
 testme:
   stage: test
   script:
-    - bats tests
+    - ./testme.sh -t

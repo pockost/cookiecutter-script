@@ -3,19 +3,33 @@
 [Cookiecutter](https://cookiecutter.rtfd.io) template to generate a bash
 script project layout.
 
+## Usage
+
+Install *Cookiecutter*:
+
+```
+python3 -m pip install cookiecutter
+```
+
+Generate the project using *Cookiecutter*:
+
+```
+cookiecutter https://github.com/cslucr/cookiecutter-script.git
+```
+
 ## Layout
 
 This repository provides the following file tree layout:
 
 ```
 script/
-├── docs
+├── doc
 │   ├── requirements.txt
 │   ├── source
 │   │   ├── api
-│   │   │   ├── scripts
+│   │   │   ├── script
 │   │   │   │   └── script.inc
-│   │   │   └── scripts.inc
+│   │   │   └── script.inc
 │   │   ├── api.rst
 │   │   ├── author.rst
 │   │   ├── compatibility.rst
@@ -23,10 +37,10 @@ script/
 │   │   ├── description.rst
 │   │   ├── index.rst
 │   │   ├── license.rst
-│   │   ├── links.rst
-│   │   ├── parameters
+│   │   ├── link.rst
+│   │   ├── parameter
 │   │   │   └── help.inc
-│   │   ├── parameters.rst
+│   │   ├── parameter.rst
 │   │   ├── _static
 │   │   │   └── .gitkeep
 │   │   ├── uml.rst
@@ -48,23 +62,10 @@ script/
 ├── README.rst
 ├── .readthedocs.yml
 ├── script.sh
-├── tests
+├── test
 │   └── script.bats
+├── testme.sh
 └── .travis.yml
-```
-
-## Usage
-
-Install *Cookiecutter*:
-
-```
-python3 -m pip install cookiecutter
-```
-
-Generate the project using *Cookiecutter*:
-
-```
-cookiecutter https://github.com/cslucr/cookiecutter-script.git
 ```
 
 ## License

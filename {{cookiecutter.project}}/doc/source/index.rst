@@ -24,13 +24,13 @@ Contents
 
    usage
 
-   parameters
+   parameter
 
    compatibility
 
    license
 
-   links
+   link
 
    uml
 
