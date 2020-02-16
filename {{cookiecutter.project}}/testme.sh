@@ -45,7 +45,7 @@ function ansible_tests_exists() {
     local project_path=$(pwd)
     [[ -d $1 ]] && project_path="$( cd "$1" ; pwd -P )"
 
-    locat test_path=$(get_test_dir $project_path)
+    local test_path=$(get_test_dir $project_path)
 
     # Bare metal tests (no molecule/docker).
     # Search for yml tests.
@@ -146,6 +146,53 @@ function error_message() {
         echo "if it is a python package (i.e.: ansible)."
         ;;
     esac
+    return 0
+}
+
+# @description Obtains the project's documentation directory.
+#
+# This function tries:
+# - Read a *.readthedocs.yml* file.
+# - Search for the *./docs* directory.
+# - Default to *./doc*.
+#
+# @arg $1 string Optional project path. Default to current path.
+#
+# @exitcode 0 If successful.
+# @exitcode 1 On failure.
+#
+# @stdout Path to the documentation directory
+function get_doc_dir() {
+
+    local project_path=$(pwd)
+    [[ -d $1 ]] && project_path="$( cd "$1" ; pwd -P )"
+
+    # Read documentation path from Readthedocs configuration.
+    if [[ -f $project_path/.readthedocs.yml ]]; then
+
+        local config_line=$(cat .readthedocs.yml | grep 'configuration')
+
+        if ! [[ -z config_line ]]; then
+
+            # Remove the 'configuration:' part.
+            config_line=${config_line//configuration\: /}
+            config_line=$(dirname $config_line)
+
+            # Remove the 'source/' part.
+            config_line=${config_line//source/}
+
+            # Get the full path.
+            config_line=$(realpath -s $config_line)
+            echo $config_line
+
+            return 0
+        fi
+    fi
+
+    # Try /docs.
+    [[ -d $project_path/docs ]] && echo "$project_path/docs" && return 0
+
+    echo "$project_path/doc"
     return 0
 }
 
@@ -402,12 +449,8 @@ function molecule_tests_exists() {
     # Search for molecule tests.
     ! [[ -d "$project_path/molecule" ]] && echo false && return 0
 
-    local pip_list=$($python_exec -m pip list)
-
-    [[ $pip_list == *"molecule"* ]] && echo true && return 0
-
-    echo false && return 0
-
+    echo true
+    return 0
 }
 
 # @description Determines if python related tests exists.
@@ -586,6 +629,8 @@ function setup_python_requirements() {
     local project_path=$(pwd)
     [[ -d $1 ]] && project_path="$( cd "$1" ; pwd -P )"
 
+    local doc_dir=$(get_doc_dir $project_path)
+
     ls $project_path/requirements*.txt &>/dev/null
 
     if [ $? -eq 0 ]; then
@@ -602,9 +647,19 @@ function setup_python_requirements() {
 
     fi
 
-    # Verify if a docs/requirements.txt file exists.
-    if [[ -f $project_path/docs/requirements.txt ]]; then
-        $python_exec -m pip install -r $project_path/docs/requirements.txt
+    # Verify if a $doc_dir/requirements.txt file exists.
+    if [[ -f $doc_dir/requirements.txt ]]; then
+        $python_exec -m pip install -r $doc_dir/requirements.txt
+    fi
+
+    # If Ansible tests exists, install Ansible.
+    if [[ $(ansible_tests_exists $project_path) == 'true' ]]; then
+        $python_exec -m pip install ansible
+    fi
+
+    # If Molecule tests exists, Install Molecule.
+    if [[ $(molecule_tests_exists $project_path) == 'true' ]]; then
+        $python_exec -m pip install molecule[docker]
     fi
 
     return 0
