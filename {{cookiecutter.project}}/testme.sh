@@ -1141,8 +1141,7 @@ function poetry_exist() {
     local project_path=$(pwd)
     [[ -d $1 ]] && project_path="$( cd "$1" ; pwd -P )"
 
-    # Search for tox.ini file.
-    local ls_result=$(ls $test_path)
+    # Search for pyproject.toml file.
     [[ -f $project_path/pyproject.toml ]] && echo true && return 0
 
     echo false && return 0
@@ -1459,7 +1458,6 @@ function tox_exist() {
     [[ -d $1 ]] && project_path="$( cd "$1" ; pwd -P )"
 
     # Search for tox.ini file.
-    local ls_result=$(ls $test_path)
     [[ -f $project_path/tox.ini ]] && echo true && return 0
 
     echo false && return 0
