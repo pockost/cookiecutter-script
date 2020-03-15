@@ -315,15 +315,15 @@ function bats_run() {
     local project_path=$(pwd)
     [[ -d $1 ]] && project_path="$( cd "$1" ; pwd -P )"
 
-    # Verify test folder exists.
-    local test_path=$(get_test_path $project_path)
-    ! [[ -d $test_path ]] && error_message 'path' "$test_path" && return 1
-
     # Verify bats tests exists.
     [[ $(bats_exist $project_path) == 'false' ]] && return 0
 
     bats_setup
     [ $? -eq 1 ] && return 1
+
+    # Verify test folder exists.
+    local test_path=$(get_test_path $project_path)
+    ! [[ -d $test_path ]] && error_message 'path' "$test_path" && return 1
 
     # Run bats tests.
     bats $test_path
