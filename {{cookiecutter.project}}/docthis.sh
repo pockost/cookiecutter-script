@@ -13,9 +13,9 @@ PYTHON_EXEC=''
 INSTALL_REQUIREMENT=false
 
 # requirements.txt file contents.
-REQUIREMENTS_PIP_CONTENTS='sphinxcontrib-restbuilder
+REQUIREMENTS_PIP_CONTENTS='sphinx
+sphinxcontrib-restbuilder
 sphinxcontrib-globalsubs
-sphinx-prompt
 Sphinx-Substitution-Extensions
 sphinx_rtd_theme'
 
