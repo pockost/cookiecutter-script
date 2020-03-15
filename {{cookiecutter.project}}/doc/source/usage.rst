@@ -9,12 +9,12 @@ Download the script, give it execution permissions and execute it:
  chmod +x |PROJECT|.sh
  ./|PROJECT|.sh -h
 
-- To run tests:
+To run tests:
 
- .. substitution-code-block:: bash
+.. substitution-code-block:: bash
 
-  cd |PROJECT|
-  bats tests
+ cd |PROJECT|
+ ./testme.sh
 
- On some tests you may need to use *sudo* to succeed.
+On some tests you may need to use *sudo* to succeed.
 

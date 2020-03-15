@@ -14,7 +14,7 @@ python3 -m pip install cookiecutter
 Generate the project using *Cookiecutter*:
 
 ```
-cookiecutter https://github.com/cslucr/cookiecutter-script.git
+python3 -m cookiecutter https://github.com/cslucr/cookiecutter-script.git
 ```
 
 ## Layout
@@ -48,6 +48,9 @@ script/
 │   └── uml
 │       └── flow.mmd
 ├── docthis.sh
+├── .github
+│   └── workflows
+│       └── github-ci.yml
 ├── .gitignore
 ├── .gitlab
 │   └── issue_templates

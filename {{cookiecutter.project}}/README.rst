@@ -2,6 +2,12 @@
 {{ cookiecutter.project }}
 ******
 
+.. image:: https://git.beta.ucr.ac.cr/{{ cookiecutter.author }}/{{ cookiecutter.project }}/badges/master/pipeline.svg
+   :alt: pipeline
+
+.. image:: https://travis-ci.com/{{ cookiecutter.author }}/{{ cookiecutter.project }}.svg
+   :alt: travis
+
 .. image:: https://readthedocs.org/projects/{{ cookiecutter.project }}/badge
    :alt: readthedocs
 
@@ -59,16 +65,14 @@ Download the script, give it execution permissions and execute it:
    chmod +x script.sh
    ./script.sh -h
 
-* To run tests:
+To run tests:
 
-..
+::
 
-   ::
+   cd {{ cookiecutter.project }}
+   ./testme.sh
 
-      cd {{ cookiecutter.project }}
-      bats tests
-
-   On some tests you may need to use *sudo* to succeed.
+On some tests you may need to use *sudo* to succeed.
 
 
 Parameters
@@ -114,9 +118,15 @@ Links
 
 `Github <https://github.com/{{ cookiecutter.author }}/{{ cookiecutter.project }}>`_.
 
+`Github CI <https://github.com/{{ cookiecutter.author }}/{{ cookiecutter.project }}/actions>`_.
+
 `Gitlab <https://git.beta.ucr.ac.cr/{{ cookiecutter.author }}/{{ cookiecutter.project }}>`_.
 
+`Gitlab CI <https://git.beta.ucr.ac.cr/{{ cookiecutter.author }}/{{ cookiecutter.project }}/pipelines>`_.
+
 `Readthedocs <https://{{ cookiecutter.project }}.readthedocs.io>`_.
+
+`Travis CI <https://travis-ci.com/{{ cookiecutter.author }}/{{ cookiecutter.project }}>`_.
 
 
 UML
