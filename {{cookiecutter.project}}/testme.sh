@@ -1170,10 +1170,11 @@ function poetry_run() {
         local current_path=$(pwd)
         cd $project_path
 
+        $python_exec -m poetry install
+
         if [[ $(cat $project_path/pyproject.toml) == *'tox'* ]]; then
             $python_exec -m poetry run tox $test_path/*.py
         else
-            $python_exec -m poetry install
             $python_exec -m poetry run pytest $test_path/*.py
         fi
 
