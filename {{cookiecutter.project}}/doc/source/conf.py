@@ -14,6 +14,7 @@ sys.path.insert(0, os.path.abspath("../.."))
 extensions = [
     "sphinxcontrib.restbuilder",
     "sphinxcontrib.globalsubs",
+    "sphinx-prompt",
     "sphinx_substitution_extensions"
 ]
 

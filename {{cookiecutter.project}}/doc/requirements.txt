@@ -3,3 +3,4 @@ sphinxcontrib-restbuilder
 sphinxcontrib-globalsubs
 Sphinx-Substitution-Extensions
 sphinx_rtd_theme
+sphinx-prompt
